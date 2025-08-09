@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LIJO MONU'S VEHICLES</title>
+<style>
+    body {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        font-family: 'Segoe UI', sans-serif;
+        color: white;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    /* Startup animation overlay */
+    #startup {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        animation: fadeOut 2.5s ease 2.5s forwards;
+    }
+    #startup h1 {
+        font-size: 3rem;
+        background: linear-gradient(90deg, #ff00cc, #3333ff, #00ffcc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: textGlow 2s infinite;
+    }
+    @keyframes textGlow {
+        0% { filter: drop-shadow(0 0 5px #ff00cc); }
+        50% { filter: drop-shadow(0 0 20px #00ffcc); }
+        100% { filter: drop-shadow(0 0 5px #ff00cc); }
+    }
+    @keyframes fadeOut {
+        to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Title with color changing */
+    header {
+        text-align: center;
+        padding: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        animation: colorChange 3s infinite;
+        text-shadow: 0 0 15px white;
+    }
+    @keyframes colorChange {
+        0% { color: #ff00ff; }
+        33% { color: #00ffff; }
+        66% { color: #00ff00; }
+        100% { color: #ff00ff; }
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 900px;
+        margin: auto;
+    }
+    .input-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .input-group input, .input-group button {
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    .input-group input {
+        flex: 1;
+    }
+    .input-group button {
+        background: linear-gradient(90deg, #ff0080, #7928ca);
+        color: white;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .input-group button:hover {
+        transform: scale(1.05);
+    }
+
+    #search {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        margin-bottom: 20px;
+        font-size: 1rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+    }
+    th {
+        background: rgba(255,255,255,0.1);
+    }
+    tr:nth-child(even) {
+        background: rgba(255,255,255,0.05);
+    }
+
+    /* Funny extra touch */
+    .footer-note {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+</style>
+</head>
+<body>
+
+<!-- Startup Animation -->
+<div id="startup"><h1>MELCOW LIJO MONU</h1></div>
+
+<header>LIJO MONU'S VEHICLES</header>
+
+<div class="container">
+    <div class="input-group">
+        <input type="text" id="vehicleNumber" placeholder="Vehicle Number">
+        <input type="text" id="driver" placeholder="Driver Name">
+        <input type="text" id="vehicleType" placeholder="Vehicle Type">
+        <button onclick="addVehicle()">Upload</button>
+    </div>
+
+    <input type="text" id="search" placeholder="Search...">
+
+    <table id="vehicleTable">
+        <thead>
+            <tr>
+                <th>Vehicle Number</th>
+                <th>Driver</th>
+                <th>Vehicle Type</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="footer-note">🚀 Tip: If you press F5, your data won’t vanish — because, unlike your ex, I remember everything! ❤️</div>
+</div>
+
+<script>
+    let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+
+    function renderTable(data) {
+        const tbody = document.querySelector('#vehicleTable tbody');
+        tbody.innerHTML = '';
+        data.forEach((v, index) => {
+            const row = `<tr>
+                <td>${v.number}</td>
+                <td>${v.driver}</td>
+                <td>${v.type}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function addVehicle() {
+        const number = document.getElementById('vehicleNumber').value.trim();
+        const driver = document.getElementById('driver').value.trim();
+        const type = document.getElementById('vehicleType').value.trim();
+        if (number && driver && type) {
+            vehicles.push({ number, driver, type });
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+            renderTable(vehicles);
+            document.getElementById('vehicleNumber').value = '';
+            document.getElementById('driver').value = '';
+            document.getElementById('vehicleType').value = '';
+        } else {
+            alert('Please fill all fields!');
+        }
+    }
+
+    document.getElementById('search').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const filtered = vehicles.filter(v =>
+            v.number.toLowerCase().includes(query) ||
+            v.driver.toLowerCase().includes(query) ||
+            v.type.toLowerCase().includes(query)
+        );
+        renderTable(filtered);
+    });
+
+    renderTable(vehicles);
+</script>
+</body>
+</html>
